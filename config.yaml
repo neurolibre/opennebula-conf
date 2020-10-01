@@ -1,0 +1,75 @@
+jupyterhub:
+  ingress:
+    enabled: true
+    hosts:
+      - binder-mcgill.conp.cloud
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/issuer: letsencrypt-production
+    https:
+      enabled: true
+      type: nginx
+    config:
+      # Allow POSTs of upto 64MB, for large notebook support.
+      proxy-body-size: 64m
+    tls:
+      - secretName: binder-mcgill-conp-cloud-tls
+        hosts:
+          - binder-mcgill.conp.cloud
+  hub:
+    baseUrl: /jupyter/    
+    image:
+      name: conpdev/hub-image
+      tag: v1.4
+  proxy:
+    service:
+      type: NodePort
+  cull:
+    timeout: 600
+    every: 120
+  singleuser:
+    memory:
+       guarantee: 2G
+    cpu:
+       guarantee: 1
+
+# BinderHub config
+config:
+  GitHubRepoProvider:
+    banned_specs:
+      - ^(?!neurolibre\/.*).*
+      - ^ines/spacy-binder.*
+      - ^soft4voip/rak.*
+      - ^hmharshit/cn-ait.*
+      - ^shishirchoudharygic/mltraining.*
+      - ^hmharshit/mltraining.*
+  BinderHub:
+    hub_url: https://binder-mcgill.conp.cloud/jupyter
+    use_registry: true
+    image_prefix: conpdev/binder-mcgill-
+
+service:
+  type: NodePort
+
+storage:
+  capacity: 2G
+
+ingress:
+  enabled: true
+  hosts:
+    - binder-mcgill.conp.cloud
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/issuer: letsencrypt-production
+  https:
+    enabled: true
+    type: nginx
+  config:
+    # Allow POSTs of upto 64MB, for large notebook support.
+    proxy-body-size: 64m
+  tls:
+    - secretName: binder-mcgill-conp-cloud-tls
+      hosts:
+        - binder-mcgill.conp.cloud

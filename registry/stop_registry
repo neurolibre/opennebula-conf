@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo docker container stop registry && sudo docker container rm -v registry
+sudo rm -r /docker-registry/docker

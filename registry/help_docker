@@ -1,0 +1,56 @@
+#https://docs.docker.com/registry/spec/api/
+
+// ****** delete image from registry
+https://gist.github.com/jaytaylor/86d5efaddda926a25fa68c263830dac1
+
+curl -u $auth -v sSL -X DELETE "${registry}/v2/${name}/manifests/$(
+    curl -u $auth -sSL -I \
+        -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+        "${registry}/v2/${name}/manifests/$(
+            curl -u $auth -sSL "${registry}/v2/${name}/tags/list" | jq -r '.tags[0]'
+        )" \
+    | awk '$1 == "Docker-Content-Digest:" { print $2 }' \
+    | tr -d $'\r' \
+)"
+
+docker exec -it docker-registry bin/registry garbage-collect /etc/docker/registry/config.yml
+
+// ****** update docker file
+https://www.techrepublic.com/article/how-to-commit-changes-to-a-docker-image
+
+// ***** build and push docker image
+https://blog.shippable.com/build-a-docker-image-and-push-it-to-docker-hub
+
+// ****** see all containers (do not confound from images)
+sudo docker ps --all
+
+// ****** list all docker images
+sudo docker images
+
+// to remove a docker container
+sudo docker image rm container
+
+// remove all existing containers
+sudo docker rm $(sudo docker ps -aq)
+
+// run interactively docker container
+sudo docker run -it container
+
+// create singularity image from docker hub
+sudo singularity build docker://existing_image
+
+// pull all docker containers from a repo
+curl "https://hub.docker.com/v2/repositories/fcpindi/?page_size=100" | jq -r '.results|.[]|.name' | xargs -I {} docker pull fcpindi/{}
+
+// ****** Example on how to executing file with docker
+sudo docker run --mount type=bind,source=/home/ltetrel/Documents/work/Raw2Bids,target=/WORK,readonly --mount type=bind,source=/home/ltetrel,target=/home/ltetrel nibabel-2.3.2 python /WORK/raw2bids.py
+
+// to convert a docker .img to singularity .simg
+sudo docker run -v /var/run/docker.sock:/var/run/docker.sock \
+-v /Where/to/save/simg:/output \
+--privileged -t --rm \
+singularityware/docker2singularity \
+myDockerImg
+
+// ******* Delete all none images
+sudo docker rmi --force $(sudo docker images --all| grep none | awk '{ print $3; }')

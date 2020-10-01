@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#sudo openssl req  -subj "/CN=192.168.73.25" -newkey rsa:4096 -nodes -sha256 -keyout /certs/domain.key -x509 -days 365 -out /certs/domain.crt
+#sudo mkdir -p /etc/docker/certs.d/192.168.73.25
+#sudo cp /certs/domain.crt /etc/docker/certs.d/192.168.73.25/ca.crt
+#sudo docker rm registry --force
+#sudo docker run -d -p 443:443 --restart=always --name registry -v /certs:/certs -v /docker-registry:/var/lib/registry -v /home/ubuntu/auth:/auth -e "REGISTRY_AUTH=htpasswd" -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2
+
+sudo docker run -d -p 80:80 --restart=always --name registry -v /docker-registry:/var/lib/registry -v /home/ubuntu/auth:/auth -e "REGISTRY_AUTH=htpasswd" -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -e REGISTRY_HTTP_ADDR=0.0.0.0:80 -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
