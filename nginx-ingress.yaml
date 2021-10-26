@@ -2,7 +2,11 @@ rbac:
  create: true
 controller:
   service:
-    type: LoadBalancer
+    type: NodePort
+    #type: LoadBalancer
+    #loadBalancerIP: 132.206.37.38
+    #annotations:
+    #  metallb.universe.tf/allow-shared-ip: 6f48f0
   kind: DaemonSet
   hostNetwork: true
   config:
